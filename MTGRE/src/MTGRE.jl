@@ -7,24 +7,8 @@ abstract type SystemOp <: Op end
 const PlayerId = Int
 const ObjId    = Int
 
-struct TraceEntry
-    seq   ::Int
-    phase ::Symbol
-    kind  ::Symbol
-    t     ::Int
-    cohort::Int
-    actor ::Union{Int,Nothing}
-    tag   ::Symbol
-    data  ::NamedTuple
-end
+include("logging/TraceTypes.jl")
 
-mutable struct Trace
-    entries::Vector{TraceEntry}
-    nextseq::Int
-    seed   ::UInt64
-end
-
-Trace(seed = 0xC0FFEE) = Trace(TraceEntry[], 1, seed)
 
 mutable struct StackObj
     kind::Symbol
@@ -51,15 +35,8 @@ mutable struct GameState
     tapped::Dict{ObjId,Bool}
 end
 
-########## Trace ##########
-function trace!(S::GameState; phase::Symbol, kind::Symbol, tag::Symbol,
-                t::Int=S.t_current, cohort::Int=0, actor::Union{Int,Nothing}=nothing,
-                data::NamedTuple=NamedTuple())::Nothing; end
+include("logging/TraceAPI.jl")
 
-tracefilter(tr::Trace; phase=nothing, kind=nothing, tag=nothing) = nothing
-trace_since_last_checkpoint(tr::Trace) = nothing
-dump_last!(io::IO, tr::Trace; N::Int=12) = nothing
-assert_microcycle_postconditions!(S::GameState; effects_left_at_tstar::Bool=false)::Nothing = nothing
 
 ########## Ops ##########
 # System ops (bypass pipeline)
