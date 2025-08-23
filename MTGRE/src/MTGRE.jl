@@ -4,7 +4,7 @@ abstract type Op end
 abstract type StateOp <: Op end
 abstract type SystemOp <: Op end
 
-const PlayerID = Int
+const PlayerId = Int
 const ObjId    = Int
 
 struct TraceEntry
@@ -28,7 +28,7 @@ Trace(seed = 0xC0FFEE) = Trace(TraceEntry[], 1, seed)
 
 mutable struct StackObj
     kind::Symbol
-    controller::PlayerID
+    controller::PlayerId
     target::Union{ObjId,Nothing}
 end
 
@@ -55,10 +55,11 @@ end
 function trace!(S::GameState; phase::Symbol, kind::Symbol, tag::Symbol,
                 t::Int=S.t_current, cohort::Int=0, actor::Union{Int,Nothing}=nothing,
                 data::NamedTuple=NamedTuple())::Nothing; end
-tracefilter(tr::Trace; phase=nothing, kind=nothing, tag=nothing)
-trace_since_last_checkpoint(tr::Trace)
-dump_last!(io::IO, tr::Trace; N::Int=12)
-assert_microcycle_postconditions!(S::GameState; effects_left_at_tstar::Bool=false)::Nothing
+
+tracefilter(tr::Trace; phase=nothing, kind=nothing, tag=nothing) = nothing
+trace_since_last_checkpoint(tr::Trace) = nothing
+dump_last!(io::IO, tr::Trace; N::Int=12) = nothing
+assert_microcycle_postconditions!(S::GameState; effects_left_at_tstar::Bool=false)::Nothing = nothing
 
 ########## Ops ##########
 # System ops (bypass pipeline)
@@ -70,28 +71,29 @@ struct ResolveTop <: StateOp end
 struct DealDamage <: StateOp;  src::ObjId; tgt::ObjId; amount::Int; combat::Bool; end
 
 ########## Scheduler ##########
-new_cohort!(S::GameState)::Int
-schedule!(S::GameState, op::Op; t::Int=S.t_current, cohort::Int=new_cohort!(S), priority::Int=0)::Nothing
-has_work_at_time(S::GameState, t::Int)::Bool
-minimal_time_with_work(S::GameState)::Int
-pop_next_cohort!(S::GameState, t::Int) -> (cohort::Int, class::Symbol, batch::Vector{Op})  # :state | :system
+new_cohort!(S::GameState)::Int = nothing
+schedule!(S::GameState, op::Op; t::Int=S.t_current, cohort::Int=new_cohort!(S), priority::Int=0)::Nothing = nothing
+has_work_at_time(S::GameState, t::Int)::Bool = nothing
+minimal_time_with_work(S::GameState)::Int = nothing
+pop_next_cohort!(S::GameState, t::Int)::Tuple{Int,Symbol,Vector{Op}} =
+    (0, :state, Vector{Op}())   # or Op[]
 
 ########## Pipeline (StateOp only) ##########
-apply_replacements!(S::GameState, op::StateOp)::StateOp      # stub CR 616
-apply_layers!(S::GameState, op::StateOp)::StateOp             # stub CR 613
-validate!(S::GameState, op::StateOp)::Bool
-commit_state_batch!(S::GameState, batch::Vector{StateOp})::Vector{NamedTuple}  # events
+apply_replacements!(S::GameState, op::StateOp)::StateOp = nothing     # stub CR 616
+apply_layers!(S::GameState, op::StateOp)::StateOp = nothing            # stub CR 613
+validate!(S::GameState, op::StateOp)::Bool = nothing
+commit_state_batch!(S::GameState, batch::Vector{StateOp})::Vector{NamedTuple} = nothing # events
 
 ########## Frames ##########
-casting_frame!(S::GameState, player::PlayerId; kind::Symbol, target::Union{ObjId,Nothing}=nothing)::Bool
-play_land!(S::GameState, player::PlayerId, card::ObjId)::Bool   # helper authors a PlayLand op
+casting_frame!(S::GameState, player::PlayerId; kind::Symbol, target::Union{ObjId,Nothing}=nothing)::Bool = true
+play_land!(S::GameState, player::PlayerId, card::ObjId)::Bool = true  # helper authors a PlayLand op
 
 ########## Loops ##########
-microcycle!(S::GameState)::Nothing
-open_priority_window!(S::GameState, scripted_actions)::Nothing
-run_game!(S::GameState, scripted_actions)::Nothing
+microcycle!(S::GameState)::Nothing = nothing
+open_priority_window!(S::GameState, scripted_actions)::Nothing = nothing
+run_game!(S::GameState, scripted_actions)::Nothing = nothing
 
 ########## SBA ##########
-apply_sba!(S::GameState)::NamedTuple   # MVP: lethal damage → graveyard
+apply_sba!(S::GameState)::NamedTuple = nothing  # MVP: lethal damage → graveyard
 
 end # module MTGRE

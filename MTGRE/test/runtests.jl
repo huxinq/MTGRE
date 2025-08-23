@@ -1,6 +1,14 @@
 # test/runtests.jl
 using Test
-using MTGRE
+import MTGRE
+import MTGRE: GameState, StackObj, Trace, TraceEntry,
+              AdvanceClock, PriorityCheckpoint,  # if you call/schedule these directly
+              PlayLand, ResolveTop, DealDamage,
+              schedule!, new_cohort!, microcycle!,
+              open_priority_window!, run_game!,
+              casting_frame!, play_land!,
+              tracefilter, trace_since_last_checkpoint,
+              assert_microcycle_postconditions!
 
 # ----------------------------
 # Helpers (tiny, self-contained)
