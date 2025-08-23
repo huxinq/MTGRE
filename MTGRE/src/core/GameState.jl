@@ -1,6 +1,6 @@
 mutable struct GameState
     t_current::Int
-    scheduler::Any
+    scheduler::Vector{Op}
     stack::Vector{StackObj}
     sba_dirty::Bool
     trace::Trace
