@@ -1,8 +1,6 @@
 module MTGRE
 
-abstract type Op end
-abstract type StateOp <: Op end
-abstract type SystemOp <: Op end
+include("core/Op.jl")
 
 const PlayerId = Int
 const ObjId    = Int
@@ -16,24 +14,7 @@ mutable struct StackObj
     target::Union{ObjId,Nothing}
 end
 
-mutable struct GameState
-    t_current::Int
-    scheduler::Any
-    stack::Vector{StackObj}
-    sba_dirty::Bool
-    trace::Trace
-    players::Vector{PlayerId}
-    life::Dict{PlayerId,Int}
-    hand::Dict{PlayerId,Vector{ObjId}}
-    battlefield::Vector{ObjId}
-    graveyard::Vector{ObjId}
-    kind::Dict{ObjId,Symbol}
-    controller::Dict{ObjId,PlayerId}
-    power::Dict{ObjId,Int}
-    toughness::Dict{ObjId,Int}
-    damage::Dict{ObjId,Int}
-    tapped::Dict{ObjId,Bool}
-end
+include("core/GameState.jl")
 
 include("logging/TraceAPI.jl")
 
