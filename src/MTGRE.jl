@@ -7,7 +7,7 @@ const PlayerId = Int
 const ObjId    = Int
 
 include("tracing/Tracing.jl")
-
+@reexport using .Tracing
 
 mutable struct StackObj
     kind::Symbol
@@ -15,11 +15,10 @@ mutable struct StackObj
     target::Union{ObjId,Nothing}
 end
 
-include("core/GameState.jl")
 
 
 
-########## Ops ##########
+#= ########## Ops ##########
 # System ops (bypass pipeline)
 struct AdvanceClock      <: SystemOp end
 struct PriorityCheckpoint <: SystemOp end
@@ -52,6 +51,6 @@ open_priority_window!(S::GameState, scripted_actions)::Nothing = nothing
 run_game!(S::GameState, scripted_actions)::Nothing = nothing
 
 ########## SBA ##########
-apply_sba!(S::GameState)::NamedTuple = nothing  # MVP: lethal damage → graveyard
+apply_sba!(S::GameState)::NamedTuple = nothing  # MVP: lethal damage → graveyard =#
 
 end # module MTGRE

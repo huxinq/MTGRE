@@ -33,4 +33,4 @@ by_frame(id) = e -> e.frame_id == FrameId(id)
 
 trace_since_last_checkpoint(tr::Trace) = nothing
 dump_last!(io::IO, tr::Trace; N::Int=12) = nothing
-assert_microcycle_postconditions!(S::GameState; effects_left_at_tstar::Bool=false)::Nothing = nothing
+assert_microcycle_postconditions!(S; effects_left_at_tstar::Bool=false)::Nothing = nothing

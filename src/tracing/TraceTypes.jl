@@ -1,4 +1,8 @@
 export TracePhase, TraceKind, TraceTag, TraceEntry, Trace
+export VTime, Cohort, ActorId, FrameId, Seq
+export microcycle, priority
+export cohort, commit, ep, stack, frame, asba, checkpoint, Event
+export SE_batch, SE_commit, done
 
 @enum TracePhase::Int8 begin
     microcycle = 1
