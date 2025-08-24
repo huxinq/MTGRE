@@ -1,8 +1,10 @@
 export schedule!
 
-function schedule!(S::GameState, ops::AbstractVector{<:Op}; t::VTime=getvtime(S), cohort::Cohort=Cohort(0))
-    q = get!(S.sched, t) do; Vector{Batch}(); end
+function schedule!(sched::Dict{VTime, Vector{Batch}}, ops::AbstractVector{<:Op}; t::VTime, cohort::Cohort)
+    q = get!(sched, t) do; Vector{Batch}(); end
     push!(q, Batch(cohort, ops))
     return nothing
 end
-schedule!(S::GameState, ops::Op...; kwargs...) = schedule!(S, collect(ops); kwargs...)
+schedule!(sched::Dict{VTime, Vector{Batch}}, ops::Vararg{<:Op}; kwargs...) = schedule!(sched, collect(ops); kwargs...)
+schedule!(S::GameState, ops...; t=getvtime(S), cohort=Cohort(0)) = 
+    schedule!(S.sched, ops...; t=t, cohort=cohort)
