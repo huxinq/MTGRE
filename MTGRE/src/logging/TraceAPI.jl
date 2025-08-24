@@ -20,7 +20,15 @@ function trace!(trace::Trace; cause_seq=0,
     push!(trace, entry)
 end
 
-tracefilter(tr::Trace; phase=nothing, kind=nothing, tag=nothing) = nothing
+# ====================== trace filter helpers ==============================
+by_kind(k) = e -> e.kind === k
+by_tag(tg) = e -> e.tag === tg
+by_t(x)    = e -> e.t == VTime(x)
+by_t(r::UnitRange) = e -> e.t in VTime(first(r)):VTime(last(r))
+by_seq(rng) = e -> e.seq in rng
+by_actor(id) = e -> e.actor_id == ActorId(id)
+by_frame(id) = e -> e.frame_id == FrameId(id)
+
 trace_since_last_checkpoint(tr::Trace) = nothing
 dump_last!(io::IO, tr::Trace; N::Int=12) = nothing
 assert_microcycle_postconditions!(S::GameState; effects_left_at_tstar::Bool=false)::Nothing = nothing
