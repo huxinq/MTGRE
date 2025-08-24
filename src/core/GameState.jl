@@ -1,3 +1,5 @@
+export GameState, getvtime
+
 mutable struct GameState
     t_current :: VTime
 
