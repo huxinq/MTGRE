@@ -1,6 +1,6 @@
 module Engine
-using ..MTGRE.Core
-using ..MTGRE.Tracing
+using ..Core
+using ..Tracing
 
 include("schedule.jl")
 
