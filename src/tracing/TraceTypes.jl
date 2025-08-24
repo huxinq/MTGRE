@@ -4,7 +4,7 @@ export microcycle, priority
 export cohort, commit, ep, stack, frame, asba, checkpoint, Event
 export SE_batch, SE_commit, done
 
-using ..MTGRE.Core: VTime
+using ..MTGRE.Core: VTime, Cohort
 
 @enum TracePhase::Int8 begin
     microcycle = 1
@@ -28,7 +28,6 @@ end
     done = 3
 end
 
-const Cohort  = Int32
 const ActorId = UInt32
 const FrameId  = UInt32
 const Seq     = UInt64
