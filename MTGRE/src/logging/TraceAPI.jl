@@ -11,12 +11,12 @@ function push!(trace::Trace, entry::TraceEntry)
     return trace
 end
 
-function trace!(trace::Trace; phase, kind,
-                t::Int32=S.t_current, cohort::Int32=Int32(0),
-                actor::UInt32 = UInt32(0x00000000), tag,
-                span_id::UInt32 = UInt32(0x00000000), cause_seq::UInt32 = UInt32(0x00000000))
+function trace!(trace::Trace; cause_seq=0,
+                t=0, cohort=0, actor_id=0,
+                frame_id=0, phase, kind, tag)
     trace.enabled || return
-    entry = TraceEntry(trace.nextseq, phase, kind, t, cohort, actor, tag, span_id, cause_seq)
+    entry = TraceEntry(trace.nextseq, cause_seq, t, cohort, actor_id,
+                       frame_id, phase, kind, tag)
     push!(trace, entry)
 end
 

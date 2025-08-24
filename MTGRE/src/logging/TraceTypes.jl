@@ -20,24 +20,33 @@
         done = 3
     end
 
+    const VTime   = Int32
+    const Cohort  = Int32
+    const ActorId = UInt32
+    const FrameId  = UInt32
+    const Seq     = UInt64
 
     struct TraceEntry
-        seq      ::UInt64            # total order
-        phase    ::TracePhase        
-        kind     ::TraceKind
-        t        ::Int32
-        cohort   ::Int32
-        actor    ::UInt32
-        tag      ::TraceTag
-        span_id  ::UInt32            # 0 if none; frame id
-        cause_seq::UInt64            # 0 if none; seq of the entry that scheduled/caused this one
+        seq      :: Seq            # total order
+        cause_seq:: Seq            # 0 if none; seq of the entry that scheduled/caused this one
+        t        :: VTime
+        cohort   :: Cohort
+        actor_id :: ActorId
+        frame_id :: FrameId            # 0 if none; frame id
+        phase    :: TracePhase        
+        kind     :: TraceKind
+        tag      :: TraceTag
     end
 
     mutable struct Trace
-        entries  ::Vector{TraceEntry}
-        nextseq  ::UInt64
-        seed     ::UInt64
-        enabled  ::Bool
+        entries  :: Vector{TraceEntry}
+        nextseq  :: Seq
+        seed     :: UInt64
+        enabled  :: Bool
     end
 
-    Trace(seed = 0xC0FFEE) = Trace(TraceEntry[], 1, seed, true)
+    TraceEntry(seq, cause_seq, t, cohort, actor_id, frame_id, phase, kind, tag) =  
+        TraceEntry(Seq(seq), Seq(cause_seq), VTime(t), Cohort(cohort),
+            ActorId(actor_id), FrameId(frame_id), phase, kind, tag)
+
+    Trace(seed = UInt64(0xC0FFEE)) = Trace(TraceEntry[], 1, seed, true)
