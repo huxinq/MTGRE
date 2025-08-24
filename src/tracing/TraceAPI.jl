@@ -1,3 +1,5 @@
+export trace!, by_kind, by_tag, by_t, by_seq, by_actor, by_frame
+
 import Base: push!
 function push!(trace::Trace, entry::TraceEntry)
     @assert entry.seq == trace.nextseq """The seq of the new \

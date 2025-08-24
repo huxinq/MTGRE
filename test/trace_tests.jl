@@ -1,5 +1,6 @@
 using Test
 using MTGRE
+using MTGRE.Tracing
 
 @testset "Trace" begin
 

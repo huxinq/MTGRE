@@ -1,11 +1,12 @@
 module MTGRE
-
-include("core/Op.jl")
+__precompile__()
+using Reexport
+include("core/Core.jl")
 
 const PlayerId = Int
 const ObjId    = Int
 
-include("logging/TraceTypes.jl")
+include("tracing/Tracing.jl")
 
 
 mutable struct StackObj
@@ -16,7 +17,6 @@ end
 
 include("core/GameState.jl")
 
-include("logging/TraceAPI.jl")
 
 
 ########## Ops ##########
