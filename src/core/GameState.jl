@@ -9,5 +9,7 @@ mutable struct GameState
     triggers  :: Vector{Any}     # will be Vector{PendingTrigger}
     prompts   :: Vector{Any}     # will be Vector{Prompt}
     sba_dirty :: Bool
-    seed      :: UInt32
+    seed      :: UInt64
 end
+
+GameState(;seed = UInt64(0xC0FFEE)) = GameState(VTime(0), Dict{VTime, Vector{Batch}}(), Any[], Any[], Any[], false, seed)
