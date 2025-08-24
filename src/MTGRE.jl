@@ -2,12 +2,15 @@ module MTGRE
 __precompile__()
 using Reexport
 include("core/Core.jl")
+@reexport using .Core
 
 const PlayerId = Int
 const ObjId    = Int
 
 include("tracing/Tracing.jl")
 @reexport using .Tracing
+
+include("engine/Engine.jl")
 
 mutable struct StackObj
     kind::Symbol
