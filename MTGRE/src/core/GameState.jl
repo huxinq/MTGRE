@@ -16,3 +16,9 @@ mutable struct GameState
     damage::Dict{ObjId,Int}
     tapped::Dict{ObjId,Bool}
 end
+
+trace(gamestate) = nothing
+scheduler(gamestate) = nothing
+
+trace(gamestate::GameState) = gamestate.trace
+scheduler(gamestate::GameState) = gamestate.scheduler
