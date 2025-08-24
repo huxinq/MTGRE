@@ -11,14 +11,13 @@ function push!(trace::Trace, entry::TraceEntry)
     return trace
 end
 
-function trace!(S::GameState; phase, kind,
+function trace!(trace::Trace; phase, kind,
                 t::Int32=S.t_current, cohort::Int32=Int32(0),
                 actor::UInt32 = UInt32(0x00000000), tag,
                 span_id::UInt32 = UInt32(0x00000000), cause_seq::UInt32 = UInt32(0x00000000))
-    old_trace = trace(S)
-    old_trace.enabled || return
-    new_entry = TraceEntry(old_trace.nextseq, phase, kind, t, cohort, actor, tag, span_id, cause_seq)
-    push!(old_trace, new_entry)
+    trace.enabled || return
+    entry = TraceEntry(trace.nextseq, phase, kind, t, cohort, actor, tag, span_id, cause_seq)
+    push!(trace, entry)
 end
 
 tracefilter(tr::Trace; phase=nothing, kind=nothing, tag=nothing) = nothing
