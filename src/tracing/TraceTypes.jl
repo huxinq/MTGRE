@@ -50,7 +50,7 @@ mutable struct Trace
     enabled  :: Bool
 end
 
-TraceEntry(seq, cause_seq, t, cohort, actor_id, frame_id, phase, kind, tag) =  
+TraceEntry(seq::Integer, cause_seq::Integer, t::Integer, cohort::Integer, actor_id::Integer, frame_id::Integer, phase, kind, tag) =  
     TraceEntry(Seq(seq), Seq(cause_seq), VTime(t), Cohort(cohort),
         ActorId(actor_id), FrameId(frame_id), phase, kind, tag)
 
