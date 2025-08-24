@@ -11,6 +11,7 @@ include("tracing/Tracing.jl")
 @reexport using .Tracing
 
 include("engine/Engine.jl")
+@reexport using .Engine
 
 mutable struct StackObj
     kind::Symbol
