@@ -13,3 +13,4 @@ mutable struct GameState
 end
 
 GameState(;seed = UInt64(0xC0FFEE)) = GameState(VTime(0), Dict{VTime, Vector{Batch}}(), Any[], Any[], Any[], false, seed)
+getvtime(gamestate::GameState) = gamestate.t_current
