@@ -9,7 +9,6 @@ using MTGRE.Tracing
     @test isa(tr.entries, Vector{MTGRE.TraceEntry})
     @test tr.enabled === true
     @test tr.nextseq == MTGRE.Seq(1)
-    @test tr.seed == UInt64(0xC0FFEE)
 end
 
 @testset "TraceEntry outer constructor coerces widths" begin

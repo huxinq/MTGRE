@@ -1,24 +1,13 @@
 mutable struct GameState
-    t_current::Int
-    scheduler::Vector{Op}
-    stack::Vector{StackObj}
-    sba_dirty::Bool
-    trace::Trace
-    players::Vector{PlayerId}
-    life::Dict{PlayerId,Int}
-    hand::Dict{PlayerId,Vector{ObjId}}
-    battlefield::Vector{ObjId}
-    graveyard::Vector{ObjId}
-    kind::Dict{ObjId,Symbol}
-    controller::Dict{ObjId,PlayerId}
-    power::Dict{ObjId,Int}
-    toughness::Dict{ObjId,Int}
-    damage::Dict{ObjId,Int}
-    tapped::Dict{ObjId,Bool}
+    t_current :: VTime
+
+    # scheduler: map virtual time -> FIFO of batches
+    sched     :: Dict{VTime, Vector{Batch}}
+
+    # runtime queues (keep types simple for now)
+    stack     :: Vector{Any}     # will be Vector{StackObj} later
+    triggers  :: Vector{Any}     # will be Vector{PendingTrigger}
+    prompts   :: Vector{Any}     # will be Vector{Prompt}
+    sba_dirty :: Bool
+    seed      :: UInt32
 end
-
-trace(gamestate) = nothing
-scheduler(gamestate) = nothing
-
-trace(gamestate::GameState) = gamestate.trace
-scheduler(gamestate::GameState) = gamestate.scheduler
