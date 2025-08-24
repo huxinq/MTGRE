@@ -4,6 +4,8 @@ export microcycle, priority
 export cohort, commit, ep, stack, frame, asba, checkpoint, Event
 export SE_batch, SE_commit, done
 
+using ..MTGRE.Core: VTime
+
 @enum TracePhase::Int8 begin
     microcycle = 1
     priority = 2
@@ -26,7 +28,6 @@ end
     done = 3
 end
 
-const VTime   = Int32
 const Cohort  = Int32
 const ActorId = UInt32
 const FrameId  = UInt32
@@ -47,7 +48,6 @@ end
 mutable struct Trace
     entries  :: Vector{TraceEntry}
     nextseq  :: Seq
-    seed     :: UInt64
     enabled  :: Bool
 end
 
@@ -55,4 +55,4 @@ TraceEntry(seq, cause_seq, t, cohort, actor_id, frame_id, phase, kind, tag) =
     TraceEntry(Seq(seq), Seq(cause_seq), VTime(t), Cohort(cohort),
         ActorId(actor_id), FrameId(frame_id), phase, kind, tag)
 
-Trace(seed = UInt64(0xC0FFEE)) = Trace(TraceEntry[], 1, seed, true)
+Trace() = Trace(TraceEntry[], 1, true)
