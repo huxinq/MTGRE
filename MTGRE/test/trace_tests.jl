@@ -1,6 +1,8 @@
 using Test
 using MTGRE
 
+@testset "Trace" begin
+
 @testset "Trace construction & defaults" begin
     tr = MTGRE.Trace()
     @test isa(tr.entries, Vector{MTGRE.TraceEntry})
@@ -96,4 +98,71 @@ end
     @test e.frame_id isa MTGRE.FrameId
     @test e.seq      isa MTGRE.Seq
     @test e.cause_seq isa MTGRE.Seq
+end
+
+@testset "Trace predicate builders" begin
+    # Build a small trace with varied fields
+    tr = MTGRE.Trace()
+    push!(tr, MTGRE.TraceEntry(tr.nextseq, 0,  0, 0, 1, 10, MTGRE.microcycle, MTGRE.cohort,     MTGRE.SE_batch))    # seq=1
+    push!(tr, MTGRE.TraceEntry(tr.nextseq, 1,  0, 0, 1, 10, MTGRE.microcycle, MTGRE.commit,     MTGRE.SE_commit))   # seq=2
+    push!(tr, MTGRE.TraceEntry(tr.nextseq, 2,  0, 0, 0,  0, MTGRE.microcycle, MTGRE.checkpoint, MTGRE.done))        # seq=3
+    push!(tr, MTGRE.TraceEntry(tr.nextseq, 3,  1, 2, 2, 11, MTGRE.microcycle, MTGRE.cohort,     MTGRE.SE_batch))    # seq=4
+    push!(tr, MTGRE.TraceEntry(tr.nextseq, 4,  2, 2, 2, 11, MTGRE.microcycle, MTGRE.commit,     MTGRE.SE_commit))   # seq=5
+
+    ents = tr.entries
+
+    @testset "by_kind / by_tag" begin
+        ks = filter(MTGRE.by_kind(MTGRE.commit), ents)
+        @test all(e -> e.kind === MTGRE.commit, ks)
+        @test getfield.(ks, :seq) == MTGRE.Seq[2, 5]
+
+        ts = filter(MTGRE.by_tag(MTGRE.SE_batch), ents)
+        @test all(e -> e.tag === MTGRE.SE_batch, ts)
+        @test getfield.(ts, :seq) == MTGRE.Seq[1, 4]
+    end
+
+    @testset "by_t single and range" begin
+        eq1 = filter(MTGRE.by_t(1), ents)
+        @test length(eq1) == 1
+        @test eq1[1].t == MTGRE.VTime(1)
+        @test eq1[1].seq == MTGRE.Seq(4)
+
+        r = filter(MTGRE.by_t(1:2), ents)
+        @test all(e -> e.t in (MTGRE.VTime(1):MTGRE.VTime(2)), r)
+        @test getfield.(r, :seq) == MTGRE.Seq[4, 5]
+    end
+
+    @testset "by_seq range" begin
+        win = filter(MTGRE.by_seq(MTGRE.Seq(2):MTGRE.Seq(4)), ents)
+        @test getfield.(win, :seq) == MTGRE.Seq[2, 3, 4]
+    end
+
+    @testset "by_actor and by_frame" begin
+        a1 = filter(MTGRE.by_actor(1), ents)
+        @test all(e -> e.actor_id == MTGRE.ActorId(1), a1)
+        @test getfield.(a1, :seq) == MTGRE.Seq[1, 2]
+
+        f11 = filter(MTGRE.by_frame(11), ents)
+        @test all(e -> e.frame_id == MTGRE.FrameId(11), f11)
+        @test getfield.(f11, :seq) == MTGRE.Seq[4, 5]
+    end
+
+    @testset "Composing predicates" begin
+        # actor == 2 AND kind == commit
+        pred = e -> MTGRE.by_actor(2)(e) && MTGRE.by_kind(MTGRE.commit)(e)
+        hits = filter(pred, ents)
+        @test length(hits) == 1
+        @test hits[1].seq == MTGRE.Seq(5)
+    end
+
+    @testset "Builders are callable" begin
+        @test MTGRE.by_t(1)(ents[4]) === true
+        @test MTGRE.by_t(1:2)(ents[5]) === true
+        @test MTGRE.by_kind(MTGRE.cohort)(ents[1]) === true
+        @test MTGRE.by_tag(MTGRE.done)(ents[3]) === true
+        @test MTGRE.by_actor(2)(ents[4]) === true
+        @test MTGRE.by_frame(10)(ents[1]) === true
+    end
+end
+
 end

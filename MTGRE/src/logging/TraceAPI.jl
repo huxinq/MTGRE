@@ -22,7 +22,7 @@ end
 
 # ====================== trace filter helpers ==============================
 by_kind(k) = e -> e.kind === k
-by_tag(tg) = e -> e.tag === tg
+by_tag(tg) = e -> e.tag === tg 
 by_t(x)    = e -> e.t == VTime(x)
 by_t(r::UnitRange) = e -> e.t in VTime(first(r)):VTime(last(r))
 by_seq(rng) = e -> e.seq in rng
